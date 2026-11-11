@@ -1,0 +1,150 @@
+# Configurazione dello scanner. Modificabile a mano: aggiungi parole chiave o venue
+# quando ti accorgi che il tool si perde qualcosa o prende cose fuori tema.
+
+# Richiesta/consigliata da Crossref e Unpaywall per le loro API pubbliche.
+# Metti la TUA email in config.locale.yaml (vedi config.locale.yaml.esempio),
+# non qui: questo file è condiviso/pubblico, config.locale.yaml resta locale
+# e non viene mai versionato (è in .gitignore).
+contatto_email: "la-tua-email@esempio.it"
+finestra_giorni: 180
+
+# IEEE Xplore e ScienceDirect (Elsevier) non vengono mai scaricati in automatico:
+# scaricare in automatico violerebbe i contratti di licenza istituzionali (quasi
+# tutti vietano il download sistematico/bulk, anche con login valido). Quando un
+# paper pertinente viene trovato solo lì, il tool apre la pagina nel tuo browser
+# normale (dove sei già loggato) perché tu lo scarichi a mano con un clic.
+# Limite ai tab aperti automaticamente in una scansione, per non travolgerti:
+max_pagine_aperte_nel_browser: 5
+
+# Opzionale. Senza chiave, l'API di Semantic Scholar è condivisa con tutti e si
+# satura in fretta (errori 429): è normale vederne qualcuno nel resoconto.
+# Una chiave gratuita (https://www.semanticscholar.org/product/api#api-key-form)
+# alza parecchio il limite. Se la richiedi, incollala qui tra virgolette.
+semantic_scholar_api_key: null
+
+# Categorie arXiv in cui cercare (evita falsi positivi di astrofisica/fisica
+# che userebbero per caso le stesse parole chiave, es. "GEO" o "survey").
+arxiv_categorie:
+  - "eess.SP"
+  - "cs.NI"
+  - "cs.IT"
+  - "eess.SY"
+
+# Almeno una di queste parole deve comparire nel titolo o nell'abstract di un paper
+# candidato, altrimenti viene scartato subito: è il filtro "fuori tema" richiesto,
+# anche se il paper è apparso in una delle venue giuste.
+parole_chiave_generali:
+  - NTN
+  - non-terrestrial
+  - "non terrestrial"
+  - satellite
+  - LEO
+  - GEO
+  - MEO
+  - HAPS
+  - "5G-NTN"
+  - "5G NTN"
+  - O-RAN
+  - "non-terrestrial network"
+
+# Una cartella per filone, con le parole chiave usate per classificare un paper
+# candidato dentro quel filone. Punteggio = numero di parole chiave trovate nel
+# titolo+abstract. Il filone con punteggio più alto vince; se il migliore è 0,
+# o se il secondo migliore è troppo vicino al primo, il paper finisce in
+# "Da categorizzare/".
+filoni:
+  "Architetture e payload":
+    - gNB
+    - "functional split"
+    - "split architecture"
+    - payload
+    - nanosatellite
+    - CubeSat
+    - O-DU
+    - O-CU
+    - "radio unit"
+    - "distributed unit"
+    - "central unit"
+  "O-RAN e AI per NTN":
+    - "O-RAN"
+    - RIC
+    - xApp
+    - "reinforcement learning"
+    - "machine learning"
+    - "artificial intelligence"
+    - "intelligent controller"
+    - "near-RT"
+    - "non-RT"
+  "Piattaforme software":
+    - OpenAirInterface
+    - "Open5GS"
+    - srsRAN
+    - free5GC
+    - UERANSIM
+    - "software stack"
+    - "open source 5G"
+  "Protocolli e procedure NTN":
+    - RLC
+    - HARQ
+    - ARQ
+    - "random access"
+    - BLER
+    - "link adaptation"
+    - MAC
+    - RRC
+    - "timing advance"
+    - ephemeris
+    - Doppler
+  "Simulatori ed emulatori NTN":
+    - emulator
+    - emulation
+    - "ns-3"
+    - simulator
+    - simulation
+    - "channel emulator"
+    - "VNF orchestration"
+    - "digital twin"
+  "Survey NTN":
+    - survey
+    - tutorial
+    - overview
+    - "state of the art"
+    - review
+  "Testbed e PoC NTN":
+    - testbed
+    - "proof of concept"
+    - "PoC"
+    - demonstrator
+    - "field trial"
+    - prototype
+    - "in-lab"
+    - "over-the-air"
+    - SDR
+    - USRP
+
+venues:
+  conferenze:
+    - "IEEE GLOBECOM"
+    - "IEEE INFOCOM"
+    - "IEEE ICC"
+    - "IEEE PIMRC"
+    - "IEEE BMSB"
+    - "IEEE VTC"
+  magazine:
+    - "IEEE Communications Magazine"
+    - "IEEE Wireless Communications Magazine"
+    - "IEEE Network"
+    - "IEEE Internet of Things Magazine"
+    - "IEEE VTC Magazine"
+  journal_e_transactions:
+    - "IEEE Transactions on Mobile Computing"
+    - "IEEE Transactions on Wireless Communications"
+    - "IEEE Transactions on Communications"
+    - "IEEE Transactions on Broadcasting"
+    - "IEEE Transactions on Vehicular Technology"
+    - "IEEE Transactions on Network and Service Management"
+    - "IEEE Transactions on Aerospace and Electronic Systems"
+    - "IEEE Journal on Selected Areas in Communications"
+    - "IEEE Internet of Things Journal"
+    - "Ad Hoc Networks"
+    - "Computer Communications"

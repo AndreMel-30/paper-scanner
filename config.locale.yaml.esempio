@@ -1,0 +1,9 @@
+# Copia questo file in "config.locale.yaml" (senza ".esempio") e metti i tuoi
+# valori personali. config.locale.yaml non viene mai versionato (è in
+# .gitignore): sovrascrive qui le chiavi che indichi, le altre restano quelle
+# di config.yaml.
+
+contatto_email: "la-tua-email@esempio.it"
+
+# Opzionale, vedi config.yaml.
+# semantic_scholar_api_key: "..."
