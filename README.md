@@ -64,3 +64,4 @@ Contiene un profilo Brave dedicato per IEEE Xplore e uno per ScienceDirect (cook
 - La classificazione per filone è a parole chiave: non è infallibile. Controlla ogni tanto la cartella `Da categorizzare/` e, se vedi errori sistematici, aggiusta le parole chiave in `config.yaml`.
 - Le colonne di analisi della "Tabella letteratura" (Problema affrontato, Metodologia, Risultati, Limiti) restano vuote: richiedono la lettura del paper, che è compito tuo.
 # paper-scanner
+# paper-scanner
