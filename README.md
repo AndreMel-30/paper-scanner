@@ -65,3 +65,4 @@ Contiene un profilo Brave dedicato per IEEE Xplore e uno per ScienceDirect (cook
 - Le colonne di analisi della "Tabella letteratura" (Problema affrontato, Metodologia, Risultati, Limiti) restano vuote: richiedono la lettura del paper, che è compito tuo.
 # paper-scanner
 # paper-scanner
+# paper-scanner
