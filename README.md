@@ -47,9 +47,20 @@ The default setup is what anyone who clones the repository gets. The spreadsheet
 
 ## Installation
 
+This tool is developed and used mainly on Linux. It also works on Windows, through the PowerShell scripts described below, but that path is less tested in practice.
+
+On Linux or macOS:
+
 ```
 ./setup.sh
 cp config.locale.yaml.esempio config.locale.yaml
+```
+
+On Windows, in PowerShell:
+
+```
+.\setup.ps1
+copy config.locale.yaml.esempio config.locale.yaml
 ```
 
 The first command creates a local Python virtual environment in the `.venv/` folder and installs the dependencies.
@@ -58,17 +69,19 @@ The second command creates a personal configuration file, `config.locale.yaml`. 
 
 ## Usage
 
-Start with a dry run. A dry run does not change any file:
+Start with a dry run. A dry run does not change any file. On Linux or macOS:
 
 ```
 ./scan.sh --dry-run
 ```
 
-To run a real scan:
+On Windows, in PowerShell:
 
 ```
-./scan.sh
+.\scan.ps1 --dry-run
 ```
+
+To run a real scan, drop `--dry-run` from either command above.
 
 One extra option is available:
 
