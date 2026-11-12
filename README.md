@@ -76,6 +76,8 @@ One extra option is available:
 
 ## Where found papers end up
 
+Downloaded PDFs are named after the first author's surname and the publication year, lowercase, no separator, for example `volk2024.pdf`. This matches the naming already used in the archive. If that name is already taken in the destination folder, a number is appended (`volk2024-2.pdf`, and so on).
+
 - **Relevant, clear topic, open-access copy found:** the PDF is saved in that topic's folder, and a new record is added to the literature table.
 - **Relevant, unclear topic:** the PDF is saved in a folder for unclear cases. The default name is "Da categorizzare". The user sorts these papers by hand.
 - **Relevant, available only on IEEE Xplore or ScienceDirect:** nothing is downloaded. The tool opens the page in the browser, up to a configurable number of pages per run (`max_pagine_aperte_nel_browser`). The paper is logged as something to retrieve manually.

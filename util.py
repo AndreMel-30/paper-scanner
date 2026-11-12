@@ -21,11 +21,6 @@ def indovina_editore(doi: str | None) -> str | None:
     return None
 
 
-def slug_titolo(titolo: str, max_parole: int = 6) -> str:
-    parole = normalizza_titolo(titolo).split()
-    return "-".join(parole[:max_parole])
-
-
 def cognome_primo_autore(autori: list[str]) -> str:
     if not autori:
         return "sconosciuto"
@@ -36,5 +31,7 @@ def cognome_primo_autore(autori: list[str]) -> str:
 
 
 def nome_file_pdf(autori: list[str], anno: int | None, titolo: str) -> str:
+    """Nome file nello stesso stile usato nell'archivio esistente: autoreAnno,
+    per esempio "volk2024.pdf" (il titolo non entra nel nome del file)."""
     anno_s = str(anno) if anno else "sd"
-    return f"{cognome_primo_autore(autori)}{anno_s}_{slug_titolo(titolo)}.pdf"
+    return f"{cognome_primo_autore(autori)}{anno_s}.pdf"
