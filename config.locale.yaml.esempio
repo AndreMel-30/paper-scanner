@@ -7,3 +7,8 @@ contatto_email: "la-tua-email@esempio.it"
 
 # Opzionale, vedi config.yaml.
 # semantic_scholar_api_key: "..."
+
+# Se hai un Excel di tracciamento con quella struttura, i suoi percorsi vanno
+# qui, non in config.yaml (che resta uguale per chiunque clona il repository).
+# percorso_excel: "../NomeDelTuoFile.xlsx"
+# script_verifica: "../script_di_verifica.py"

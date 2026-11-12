@@ -13,7 +13,7 @@ def e_in_tema(titolo: str, abstract: str | None, parole_chiave_generali: list[st
     return _punteggio(testo, parole_chiave_generali) > 0
 
 
-def classifica(titolo: str, abstract: str | None, filoni: dict[str, list[str]]) -> str:
+def classifica(titolo: str, abstract: str | None, filoni: dict[str, list[str]], cartella_ambigui: str = CARTELLA_AMBIGUI) -> str:
     testo = f"{titolo} {abstract or ''}"
     punteggi = {nome: _punteggio(testo, parole) for nome, parole in filoni.items()}
     ordinati = sorted(punteggi.items(), key=lambda kv: kv[1], reverse=True)
@@ -22,7 +22,7 @@ def classifica(titolo: str, abstract: str | None, filoni: dict[str, list[str]]) 
     secondo_punteggio = ordinati[1][1] if len(ordinati) > 1 else 0
 
     if punteggio_migliore == 0:
-        return CARTELLA_AMBIGUI
+        return cartella_ambigui
     if secondo_punteggio >= punteggio_migliore:
-        return CARTELLA_AMBIGUI
+        return cartella_ambigui
     return migliore

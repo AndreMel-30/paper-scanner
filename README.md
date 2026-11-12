@@ -1,80 +1,104 @@
 # Paper Scanner
 
-Strumento da riga di comando che scansiona periodicamente alcune fonti web per nuovi paper scientifici pertinenti a un filone di ricerca (nel mio caso: reti satellitari non-terrestri 5G/6G, O-RAN), li scarica quando legalmente possibile e li integra in un archivio bibliografico organizzato per argomento.
+Paper Scanner is a command-line tool that looks for new scientific papers on a research topic. It downloads the papers that are legally free to read and files them into an existing bibliography archive.
 
-Nato per il mio lavoro di dottorato, ma scritto in modo da poter essere adattato ad altri argomenti e archivi cambiando solo la configurazione.
+The tool runs periodically. Each run queries a few web sources, skips papers that are already known, and sorts the rest by topic.
 
-## Cosa fa
+The tool was built for the author's PhD research on satellite non-terrestrial networks, 5G and 6G, and O-RAN (Open Radio Access Network). It is written so that another topic or another archive can be used by changing only the configuration file, not the code.
 
-- Interroga **Crossref**, **Semantic Scholar** e **arXiv** per trovare paper recenti, filtrati per rivista/conferenza e per parole chiave di pertinenza.
-- Scarta automaticamente i paper già presenti in archivio (confronto per titolo) e quelli fuori tema.
-- Classifica ogni paper pertinente nella cartella giusta dell'archivio, in base a parole chiave configurabili.
-- Scarica il PDF quando esiste una copia ad accesso aperto (via **Unpaywall** o **arXiv**).
-- Aggiorna un foglio Excel di tracciamento della letteratura, mantenendo coerenti cartelle e righe.
-- Alla fine di ogni scansione, stampa un resoconto di cosa è stato scaricato, dove, e cosa resta da recuperare a mano.
+## What it does
 
-## Cosa NON fa (di proposito)
+Each run queries three public sources for recent papers:
 
-**Non scarica mai automaticamente da IEEE Xplore o ScienceDirect (Elsevier)**, anche se l'utente ha un accesso istituzionale valido. I contratti di licenza tra le università e questi editori vietano quasi sempre il download sistematico/automatizzato, indipendentemente da chi esegue l'accesso: farlo rischierebbe di far sospendere l'accesso a tutto l'ateneo, non solo all'account di chi ha lanciato lo script.
+- **Crossref** is a public database of scholarly metadata. It records basic publication details and a DOI (Digital Object Identifier, a permanent identifier for a paper) for each work.
+- **Semantic Scholar** is a public academic search API. An API is a program interface that other programs use to request data.
+- **arXiv** is a repository of preprints, which are papers posted online before or without formal journal publication.
 
-Quando un paper pertinente risulta disponibile solo su questi due editori, il tool si limita ad **aprire la pagina nel browser predefinito** dell'utente (dove presumibilmente è già loggato), perché lo scarichi a mano con un clic — esattamente come farebbe comunque senza il tool.
+The queries are filtered by journal or conference name (called the venue) and by relevance keywords.
 
-## Requisiti sull'archivio di destinazione
+After the queries, the tool does the following:
 
-Questo tool non crea un archivio da zero: si aspetta che esista già, con questa struttura (quella con cui è stato scritto e testato):
+- Skips papers that are already in the archive. Papers are matched by title.
+- Skips papers that are off topic.
+- Sorts each relevant paper into a folder of the archive, based on keywords set for each folder.
+- Downloads the PDF when a legal open-access copy exists. The tool looks for that copy through **Unpaywall**, a service that finds free legal copies of papers that are otherwise behind a paywall, and through arXiv.
+- Updates the tracking records, so the folders and the records stay consistent.
+- Prints a summary at the end of the run. The summary lists what was downloaded, where it was saved, and what must still be retrieved by hand.
 
-- Una cartella per "filone"/argomento (es. `Survey/`, `Testbed/`...), ciascuna con i PDF già nominati in modo descrittivo.
-- Un file Excel con un foglio "Tabella letteratura" (colonne: Filone, Autore e anno, Titolo e sede, ..., File) e un foglio "Da recuperare" (Paper, Link, Stato).
-- Uno script di validazione a parte (nel mio caso `controlla_excel_e_cartelle.py`) che verifica la coerenza tra l'Excel e le cartelle — il tool lo richiama a fine scansione invece di duplicarne la logica.
+## What it does not do
 
-Per usarlo su un archivio diverso, verifica/adatta `archivio.py` ai nomi reali dei fogli e delle colonne, e `config.yaml` a filoni e parole chiave del nuovo argomento.
+The tool never downloads automatically from **IEEE Xplore** or **ScienceDirect** (published by Elsevier), even when the user has valid institutional access. University license agreements with these publishers almost always forbid systematic, automated downloading, no matter who runs it. If it happens, the university as a whole can lose access, not only the one account that ran the script.
 
-## Installazione
+When a relevant paper is available only on one of these two sites, the tool opens the paper's page in the default browser. The user is probably already logged in there. The user downloads the paper with one click, as they would without the tool.
+
+## Requirements for the archive
+
+The tool does not create an archive. The archive must already exist. By default, the tool expects this layout:
+
+- The tool's own folder sits inside the archive folder.
+- Next to the tool's folder, there is one folder for each topic or subject area. Each topic folder already contains PDFs with descriptive file names.
+
+The tool keeps track of known and pending papers in one of two ways. The first way is the default:
+
+- If no spreadsheet is configured, the tool keeps a hidden JSON file inside the archive folder. It also writes a plain Markdown file named "Da recuperare.md". That file lists the papers that were found but not downloaded. No spreadsheet software is needed.
+- If a spreadsheet is configured, the tool uses it instead. The spreadsheet must have a sheet named "Tabella letteratura" (literature table) and a sheet named "Da recuperare" (to retrieve). The configuration points to the file with `percorso_excel` (Excel path) and can name a check script with `script_verifica` (verification script). The check script confirms that the spreadsheet and the folders match.
+
+The default setup is what anyone who clones the repository gets. The spreadsheet setup is specific to the author's own archive. It is kept in a local configuration file, so the shared configuration stays generic.
+
+## Installation
 
 ```
 ./setup.sh
 cp config.locale.yaml.esempio config.locale.yaml
 ```
 
-Il primo comando crea un ambiente Python locale (`.venv/`) e installa le dipendenze. Il secondo crea la copia personale di configurazione: apri `config.locale.yaml` e mettici la tua email (richiesta dalle API di Crossref/Unpaywall). Questo file non va mai versionato — `config.yaml` resta il template condiviso, uguale per chiunque usi il tool.
+The first command creates a local Python virtual environment in the `.venv/` folder and installs the dependencies.
 
-## Uso
+The second command creates a personal configuration file, `config.locale.yaml`. Open it and put your email address in it. The Crossref and Unpaywall APIs require an email address. The local file is never committed to version control. `config.yaml` stays the shared template, and it is the same for everyone who uses the tool.
 
-Prima prova, senza toccare nulla:
+## Usage
+
+Start with a dry run. A dry run does not change any file:
 
 ```
 ./scan.sh --dry-run
 ```
 
-Scansione vera e propria:
+To run a real scan:
 
 ```
 ./scan.sh
 ```
 
-Altre opzioni:
+One extra option is available:
 
-- `--since-days N` — forza la finestra temporale (default in `config.yaml`).
+- `--since-days N` sets the time window for the search, in days. The default value is set in `config.yaml`.
 
-## Dove finiscono i paper trovati
+## Where found papers end up
 
-- **Pertinente, filone chiaro, trovato in accesso aperto** (Unpaywall, arXiv) → PDF nella cartella del filone, riga nuova in "Tabella letteratura".
-- **Pertinente, filone ambiguo** → PDF in `Da categorizzare/`, da smistare a mano.
-- **Pertinente, disponibile solo su IEEE/ScienceDirect** → niente download automatico: si apre la pagina nel browser (fino a `max_pagine_aperte_nel_browser` per scansione) e viene segnalato in "Da recuperare", perché lo si scarichi a mano e lo si sistemi nella cartella giusta.
-- **Pertinente ma senza nessuna copia trovata** → niente PDF, riga in "Da recuperare" (titolo, link, motivo).
-- **Fuori tema** (nessuna parola chiave generale nel titolo/abstract) → scartato subito, non compare nemmeno nel resoconto.
-- **Già presente** (stesso titolo già in archivio) → scartato, contato nel resoconto.
+- **Relevant, clear topic, open-access copy found:** the PDF is saved in that topic's folder, and a new record is added to the literature table.
+- **Relevant, unclear topic:** the PDF is saved in a folder for unclear cases. The default name is "Da categorizzare". The user sorts these papers by hand.
+- **Relevant, available only on IEEE Xplore or ScienceDirect:** nothing is downloaded. The tool opens the page in the browser, up to a configurable number of pages per run (`max_pagine_aperte_nel_browser`). The paper is logged as something to retrieve manually.
+- **Relevant, no copy found anywhere:** nothing is downloaded. The paper is logged as something to retrieve manually, with its title, link, and the reason.
+- **Off topic** (no general relevance keyword in the title or abstract): dropped at once. It does not appear in the summary.
+- **Already in the archive** (same title already present): dropped, and counted in the summary.
 
-## Personalizzazione
+## Customization
 
-Tutto quello che riguarda cosa viene cercato sta in `config.yaml`, senza toccare il codice: venue da monitorare, parole chiave generali (il filtro "fuori tema"), parole chiave per filone (decidono in quale cartella va un paper), categorie arXiv, limite di pagine auto-aperte nel browser.
+All search settings are in `config.yaml`. No code changes are needed to change them. The file controls:
 
-## Limiti conosciuti
+- the journals and conferences to monitor;
+- the general relevance keywords, which act as the off-topic filter;
+- the keywords for each folder, which decide where a paper is filed;
+- the arXiv categories;
+- the limit on browser pages opened automatically.
 
-- Senza una chiave API, Semantic Scholar è spesso saturo (errori 429 nel log): è normale, Crossref e arXiv restano comunque interrogati. Una chiave gratuita (richiedibile su semanticscholar.org/product/api) aiuta parecchio: va messa in `semantic_scholar_api_key`.
-- La classificazione per filone è a parole chiave: non è infallibile. Controllare ogni tanto `Da categorizzare/` e, in caso di errori sistematici, aggiustare le parole chiave in `config.yaml`.
-- Le colonne di analisi della "Tabella letteratura" (Problema affrontato, Metodologia, Risultati, Limiti) restano vuote: richiedono la lettura del paper, che resta compito dell'utente.
+## Known limitations
 
-## Licenza
+- Without an API key, the public Semantic Scholar endpoint is often rate-limited. The log then shows HTTP 429 errors. This is expected. Crossref and arXiv are still queried normally. A free API key can be requested at semanticscholar.org/product/api. Put the key in `semantic_scholar_api_key`. It helps a lot.
+- Topic classification is based on keywords, so it is not perfect. Check the "Da categorizzare" folder from time to time. If the same kind of mistake repeats, adjust the keywords in `config.yaml`.
+- The analysis columns of the literature table (problem addressed, methodology, results, limitations) are left blank. Filling them requires reading the paper, which the user still does.
 
-Nessuna licenza specificata: tutti i diritti sono riservati per default. Se vuoi che altri possano riusare/modificare liberamente il codice, valuta di aggiungere un file `LICENSE` (es. MIT).
+## License
+
+No license is specified yet, so all rights are reserved by default. If you want others to reuse or modify the code freely, add a `LICENSE` file. The MIT license is a common choice.

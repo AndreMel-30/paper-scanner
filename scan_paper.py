@@ -106,7 +106,9 @@ def esegui_scansione(cfg: dict, giorni: int, dry_run: bool) -> None:
     max_browser = cfg.get("max_pagine_aperte_nel_browser", 5)
     candidati = raccogli_candidati(cfg, giorni)
 
-    arch = archivio.Archivio()
+    percorso_excel = (QUI / cfg["percorso_excel"]).resolve() if cfg.get("percorso_excel") else None
+    script_verifica = (QUI / cfg["script_verifica"]).resolve() if cfg.get("script_verifica") else None
+    arch = archivio.crea_archivio(CARTELLA_PAPER_SCIENTIFICI, percorso_excel)
     scaricati, da_recuperare = [], []
     scartati_duplicati = 0
     pagine_aperte = 0
@@ -118,7 +120,7 @@ def esegui_scansione(cfg: dict, giorni: int, dry_run: bool) -> None:
             scartati_duplicati += 1
             continue
 
-        filone = classificatore.classifica(c["titolo"], c.get("abstract"), cfg["filoni"])
+        filone = classificatore.classifica(c["titolo"], c.get("abstract"), cfg["filoni"], cfg.get("cartella_ambigui", "Da categorizzare"))
         nome_file = nome_file_pdf(c["autori"], c["anno"], c["titolo"])
         dest_path = CARTELLA_PAPER_SCIENTIFICI / filone / nome_file
         if dest_path.exists():
@@ -142,7 +144,7 @@ def esegui_scansione(cfg: dict, giorni: int, dry_run: bool) -> None:
         if riuscito:
             aa = autore_anno(c["autori"], c["anno"])
             titolo_sede = f"{c['titolo']} ({c.get('venue') or 'n.d.'})"
-            arch.aggiungi_a_tabella_letteratura(filone, aa, titolo_sede, file_rel)
+            arch.registra_scaricato(filone, aa, titolo_sede, file_rel)
             scaricati.append({
                 "titolo": c["titolo"], "autore_anno": aa, "fonte": c["fonte"],
                 "filone": filone, "file_rel": file_rel,
@@ -161,23 +163,26 @@ def esegui_scansione(cfg: dict, giorni: int, dry_run: bool) -> None:
         else:
             motivo = "nessuna copia open-access trovata"
 
-        arch.aggiungi_a_da_recuperare(c["titolo"], link or "n.d.", motivo)
+        arch.registra_da_recuperare(c["titolo"], link or "n.d.", motivo)
         da_recuperare.append({"titolo": c["titolo"], "link": link, "motivo": motivo})
 
     if not dry_run:
-        if archivio.excel_bloccato():
-            print("\nATTENZIONE: il foglio Excel è aperto (lock file presente).")
-            print("I PDF scaricati sono salvati, ma l'Excel NON è stato aggiornato.")
-            print("Chiudi il foglio e rilancia per registrare le nuove righe.")
+        if arch.bloccato():
+            print("\nATTENZIONE: il file di archivio è aperto/bloccato.")
+            print("I PDF scaricati sono salvati, ma l'archivio NON è stato aggiornato.")
+            print("Chiudilo e rilancia per registrare le nuove righe.")
         else:
-            arch.save()
-            print("\nExcel aggiornato. Eseguo la verifica di coerenza cartelle/Excel...")
-            risultato = subprocess.run(
-                [sys.executable, "controlla_excel_e_cartelle.py", "--correggi"],
-                cwd=CARTELLA_PAPER_SCIENTIFICI,
-            )
-            if risultato.returncode != 0:
-                print("Attenzione: controlla_excel_e_cartelle.py ha segnalato un problema (vedi sopra).")
+            arch.salva()
+            if script_verifica and script_verifica.exists():
+                print("\nArchivio aggiornato. Eseguo la verifica di coerenza cartelle/Excel...")
+                risultato = subprocess.run(
+                    [sys.executable, str(script_verifica), "--correggi"],
+                    cwd=script_verifica.parent,
+                )
+                if risultato.returncode != 0:
+                    print("Attenzione: lo script di verifica ha segnalato un problema (vedi sopra).")
+            else:
+                print("\nArchivio aggiornato.")
 
     recap.stampa(scaricati, da_recuperare, scartati_duplicati, len(candidati), dry_run=dry_run)
 

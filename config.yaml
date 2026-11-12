@@ -8,6 +8,20 @@
 contatto_email: "la-tua-email@esempio.it"
 finestra_giorni: 180
 
+# Se non hai un Excel di tracciamento con i fogli "Tabella letteratura" e
+# "Da recuperare", lascia questo a null: il tool tiene traccia dei paper già
+# visti in un semplice file nella cartella dell'archivio, senza bisogno di
+# nessun Excel. Se invece hai un Excel con quella struttura, metti qui il
+# percorso (relativo a questa cartella) in config.locale.yaml, non qui.
+percorso_excel: null
+# Se usi l'Excel e hai anche uno script di validazione a parte (coerenza tra
+# le righe dell'Excel e i PDF nelle cartelle), metti qui il suo percorso: il
+# tool lo richiama da solo a fine scansione, invece di duplicarne la logica.
+script_verifica: null
+
+# Nome della cartella dove finiscono i paper pertinenti ma di filone ambiguo.
+cartella_ambigui: "Da categorizzare"
+
 # IEEE Xplore e ScienceDirect (Elsevier) non vengono mai scaricati in automatico:
 # scaricare in automatico violerebbe i contratti di licenza istituzionali (quasi
 # tutti vietano il download sistematico/bulk, anche con login valido). Quando un
