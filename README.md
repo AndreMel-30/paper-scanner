@@ -101,6 +101,10 @@ All search settings are in `config.yaml`. No code changes are needed to change t
 - Topic classification is based on keywords, so it is not perfect. Check the "Da categorizzare" folder from time to time. If the same kind of mistake repeats, adjust the keywords in `config.yaml`.
 - The analysis columns of the literature table (problem addressed, methodology, results, limitations) are left blank. Filling them requires reading the paper, which the user still does.
 
+## Attribution
+
+This project uses the Semantic Scholar API. Results and contributions coming from it are provided by [Semantic Scholar](https://www.semanticscholar.org/), a product of the Allen Institute for AI. If you use this tool's output in a published work, cite "The Semantic Scholar Open Data Platform" (Kinney et al., 2023), as required by the Semantic Scholar API license.
+
 ## License
 
 No license is specified yet, so all rights are reserved by default. If you want others to reuse or modify the code freely, add a `LICENSE` file. The MIT license is a common choice.
