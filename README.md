@@ -107,4 +107,4 @@ This project uses the Semantic Scholar API. Results and contributions coming fro
 
 ## License
 
-No license is specified yet, so all rights are reserved by default. If you want others to reuse or modify the code freely, add a `LICENSE` file. The MIT license is a common choice.
+This project is licensed under the MIT License. See the `LICENSE` file for the full text.

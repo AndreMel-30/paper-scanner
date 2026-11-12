@@ -44,22 +44,60 @@ arxiv_categorie:
   - "cs.IT"
   - "eess.SY"
 
-# Almeno una di queste parole deve comparire nel titolo o nell'abstract di un paper
-# candidato, altrimenti viene scartato subito: è il filtro "fuori tema" richiesto,
-# anche se il paper è apparso in una delle venue giuste.
-parole_chiave_generali:
+# Filtro "fuori tema": un paper candidato è pertinente se contiene almeno una
+# parola "forte" (inequivocabile nel nostro dominio), OPPURE almeno una parola
+# "ambigua" insieme ad almeno una parola di "contesto". Le parole ambigue sono
+# corte/generiche e possono comparire per caso in altri campi (es. "satellite"
+# in biologia, "GEO" in geografia): da sole non bastano, serve una conferma dal
+# contesto telecom/networking.
+parole_chiave_forti:
   - NTN
   - non-terrestrial
   - "non terrestrial"
+  - "non-terrestrial network"
+  - "5G-NTN"
+  - "5G NTN"
+  - O-RAN
+
+parole_chiave_ambigue:
   - satellite
   - LEO
   - GEO
   - MEO
   - HAPS
-  - "5G-NTN"
-  - "5G NTN"
-  - O-RAN
-  - "non-terrestrial network"
+
+parole_chiave_contesto:
+  - "communication network"
+  - "wireless communication"
+  - "satellite communication"
+  - "communication link"
+  - "data link"
+  - "core network"
+  - "access network"
+  - "mobile network"
+  - constellation
+  - "5G"
+  - "6G"
+  - "spectrum sharing"
+  - "spectrum allocation"
+  - handover
+  - "antenna beam"
+  - antenna
+  - gateway
+  - backhaul
+  - RAN
+  - latency
+  - Doppler
+  - gNB
+  - waveform
+  - modulation
+  - uplink
+  - downlink
+  - "ground station"
+  - wireless
+  - "wireless channel"
+  - "channel model"
+  - channel
 
 # Una cartella per filone, con le parole chiave usate per classificare un paper
 # candidato dentro quel filone. Punteggio = numero di parole chiave trovate nel

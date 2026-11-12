@@ -1,16 +1,27 @@
 """Assegna un paper candidato a un filone esistente, o lo marca come ambiguo."""
+import re
 
 CARTELLA_AMBIGUI = "Da categorizzare"
 
 
 def _punteggio(testo: str, parole_chiave: list[str]) -> int:
+    """Conta le parole chiave trovate come parola intera (confini di parola),
+    non come semplice sottostringa: altrimenti "RAN" matcherebbe dentro
+    "warranted", "MAC" dentro "format", eccetera."""
     testo = testo.lower()
-    return sum(1 for p in parole_chiave if p.lower() in testo)
+    return sum(1 for p in parole_chiave if re.search(rf"\b{re.escape(p.lower())}\b", testo))
 
 
-def e_in_tema(titolo: str, abstract: str | None, parole_chiave_generali: list[str]) -> bool:
+def e_in_tema(titolo: str, abstract: str | None, parole_forti: list[str], parole_ambigue: list[str], parole_contesto: list[str]) -> bool:
+    """Un paper è in tema se contiene una parola forte (inequivocabile), oppure
+    una parola ambigua (corta/generica, es. "satellite") confermata da una
+    parola di contesto telecom/networking: evita falsi positivi come un paper
+    di biologia che contiene "satellite" ma nulla legato a reti o comunicazioni.
+    """
     testo = f"{titolo} {abstract or ''}"
-    return _punteggio(testo, parole_chiave_generali) > 0
+    if _punteggio(testo, parole_forti) > 0:
+        return True
+    return _punteggio(testo, parole_ambigue) > 0 and _punteggio(testo, parole_contesto) > 0
 
 
 def classifica(titolo: str, abstract: str | None, filoni: dict[str, list[str]], cartella_ambigui: str = CARTELLA_AMBIGUI) -> str:

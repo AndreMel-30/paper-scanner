@@ -49,7 +49,7 @@ def autore_anno(autori: list[str], anno) -> str:
 def raccogli_candidati(cfg: dict, giorni: int) -> list[dict]:
     email = cfg["contatto_email"]
     tutte_le_venue = [v for gruppo in cfg["venues"].values() for v in gruppo]
-    parole_generali = cfg["parole_chiave_generali"]
+    parole_generali = cfg["parole_chiave_forti"] + cfg["parole_chiave_ambigue"]
 
     candidati = []
 
@@ -114,7 +114,7 @@ def esegui_scansione(cfg: dict, giorni: int, dry_run: bool) -> None:
     pagine_aperte = 0
 
     for c in candidati:
-        if not classificatore.e_in_tema(c["titolo"], c.get("abstract"), cfg["parole_chiave_generali"]):
+        if not classificatore.e_in_tema(c["titolo"], c.get("abstract"), cfg["parole_chiave_forti"], cfg["parole_chiave_ambigue"], cfg["parole_chiave_contesto"]):
             continue
         if arch.gia_presente(c["titolo"]):
             scartati_duplicati += 1
